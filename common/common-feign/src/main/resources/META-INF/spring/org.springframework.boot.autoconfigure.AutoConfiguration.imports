@@ -1,0 +1,3 @@
+com.lk.common.feign.FeignAutoConfiguration
+com.lk.common.feign.sentinel.SentinelAutoConfiguration
+com.lk.common.feign.sentinel.handle.GlobalBizExceptionHandler

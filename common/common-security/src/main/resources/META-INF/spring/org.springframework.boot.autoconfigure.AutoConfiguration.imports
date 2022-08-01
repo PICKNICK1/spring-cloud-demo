@@ -1,0 +1,7 @@
+com.lk.common.security.service.UserDetailsServiceImpl
+com.lk.common.security.service.AppUserDetailsServiceImpl
+com.lk.common.security.service.RedisOAuth2AuthorizationService
+com.lk.common.security.service.RedisOAuth2AuthorizationConsentService
+com.lk.common.security.component.CustomSecurityInnerAspect
+com.lk.common.security.component.CustomSecurityMessageSourceConfiguration
+com.lk.common.security.service.RemoteRegisteredClientRepository

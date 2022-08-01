@@ -1,0 +1,6 @@
+com.lk.upms.api.feign.RemoteClientDetailsService
+com.lk.upms.api.feign.RemoteDictService
+com.lk.upms.api.feign.RemoteLogService
+com.lk.upms.api.feign.RemoteTokenService
+com.lk.upms.api.feign.RemoteUserService
+com.lk.upms.api.feign.RemoteParamService
