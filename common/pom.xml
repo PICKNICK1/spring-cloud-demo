@@ -20,6 +20,7 @@
         <module>common-log</module>
         <module>common-mybatis</module>
         <module>common-swagger</module>
+        <module>common-minio</module>
     </modules>
 
     <properties>
