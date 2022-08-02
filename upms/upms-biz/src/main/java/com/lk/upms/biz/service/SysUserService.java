@@ -9,7 +9,6 @@ import com.lk.common.core.util.R;
 import com.lk.upms.api.dto.UserDTO;
 import com.lk.upms.api.dto.UserInfo;
 import com.lk.upms.api.entity.SysUser;
-import com.lk.upms.api.vo.UserExcelVO;
 import com.lk.upms.api.vo.UserVO;
 
 import java.util.List;
@@ -85,13 +84,6 @@ public interface SysUserService extends IService<SysUser> {
      */
     Boolean saveUser(UserDTO userDto);
 
-    /**
-     * 查询全部的用户
-     *
-     * @param userDTO 查询条件
-     * @return list
-     */
-    List<UserExcelVO> listUser(UserDTO userDTO);
 
     /**
      * 根据部门 id 列表查询对应的用户 id 集合

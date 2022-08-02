@@ -2,38 +2,35 @@
 
 package com.lk.upms.biz.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.lk.upms.api.dto.UserDTO;
-import com.lk.upms.api.dto.UserInfo;
-import com.lk.upms.api.entity.*;
-import com.lk.upms.api.util.ParamResolver;
-import com.lk.upms.api.vo.UserExcelVO;
-import com.lk.upms.api.vo.UserVO;
-import com.lk.upms.biz.mapper.*;
-import com.lk.upms.biz.service.SysMenuService;
-import com.lk.upms.biz.service.SysUserService;
 import com.lk.common.core.constant.CacheConstants;
 import com.lk.common.core.constant.CommonConstants;
 import com.lk.common.core.constant.enums.MenuTypeEnum;
 import com.lk.common.core.exception.ErrorCodes;
 import com.lk.common.core.util.MsgUtils;
 import com.lk.common.core.util.R;
+import com.lk.upms.api.convert.UserConvert;
+import com.lk.upms.api.dto.UserDTO;
+import com.lk.upms.api.dto.UserInfo;
+import com.lk.upms.api.entity.*;
+import com.lk.upms.api.util.ParamResolver;
+import com.lk.upms.api.vo.UserVO;
+import com.lk.upms.biz.mapper.*;
+import com.lk.upms.biz.service.SysMenuService;
+import com.lk.upms.biz.service.SysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -61,6 +58,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     private final SysUserPostMapper sysUserPostMapper;
 
+    private final UserConvert userConvert;
+
     /**
      * 保存用户信息
      *
@@ -70,10 +69,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean saveUser(UserDTO userDto) {
-        SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(userDto, sysUser);
+        SysUser sysUser = userConvert.userDTO2User(userDto);
         sysUser.setDelFlag(CommonConstants.STATUS_NORMAL);
-        sysUser.setPassword(ENCODER.encode(userDto.getPassword()));
         baseMapper.insert(sysUser);
         userDto.getRole().stream().map(roleId -> {
             SysUserRole userRole = new SysUserRole();
@@ -180,13 +177,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = CacheConstants.USER_DETAILS, key = "#userDto.username")
     public Boolean updateUser(UserDTO userDto) {
-        SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(userDto, sysUser);
+        SysUser sysUser = userConvert.userDTO2User(userDto);
         sysUser.setUpdateTime(LocalDateTime.now());
-
-        if (StrUtil.isNotBlank(userDto.getPassword())) {
-            sysUser.setPassword(ENCODER.encode(userDto.getPassword()));
-        }
         this.updateById(sysUser);
 
         sysUserRoleMapper
@@ -226,57 +218,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return this.list(Wrappers.<SysUser>query().lambda().eq(SysUser::getDeptId, parentId));
     }
 
-    /**
-     * 查询全部的用户
-     *
-     * @param userDTO 查询条件
-     * @return list
-     */
-    @Override
-    public List<UserExcelVO> listUser(UserDTO userDTO) {
-        List<UserVO> voList = baseMapper.selectVoList(userDTO);
-        // 转换成execl 对象输出
-        List<UserExcelVO> userExcelVOList = voList.stream().map(userVO -> {
-            UserExcelVO excelVO = new UserExcelVO();
-            BeanUtils.copyProperties(userVO, excelVO);
-            String roleNameList = userVO.getRoleList().stream().map(SysRole::getRoleName)
-                    .collect(Collectors.joining(StrUtil.COMMA));
-            excelVO.setRoleNameList(roleNameList);
-            String postNameList = userVO.getPostList().stream().map(SysPost::getPostName)
-                    .collect(Collectors.joining(StrUtil.COMMA));
-            excelVO.setPostNameList(postNameList);
-            return excelVO;
-        }).collect(Collectors.toList());
-        return userExcelVOList;
-    }
-
 
     @Override
     public List<Long> listUserIdByDeptIds(Set<Long> deptIds) {
         return this.listObjs(
                 Wrappers.lambdaQuery(SysUser.class).select(SysUser::getUserId).in(SysUser::getDeptId, deptIds),
                 Long.class::cast);
-    }
-
-    /**
-     * 插入excel User
-     */
-    private void insertExcelUser(UserExcelVO excel, Optional<SysDept> deptOptional, List<SysRole> roleCollList,
-                                 List<SysPost> postCollList) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(excel.getUsername());
-        userDTO.setPhone(excel.getPhone());
-        // 批量导入初始密码为手机号
-        userDTO.setPassword(userDTO.getPhone());
-        // 根据部门名称查询部门ID
-        userDTO.setDeptId(deptOptional.get().getDeptId());
-        // 根据角色名称查询角色ID
-        List<Long> roleIdList = roleCollList.stream().map(SysRole::getRoleId).collect(Collectors.toList());
-        userDTO.setRole(roleIdList);
-        List<Long> postIdList = postCollList.stream().map(SysPost::getPostId).collect(Collectors.toList());
-        userDTO.setPost(postIdList);
-        // 插入用户
-        this.saveUser(userDTO);
     }
 
     /**

@@ -23,6 +23,7 @@
         <oauth2-authorization-server.version>0.3.1</oauth2-authorization-server.version>
         <hutool.version>5.8.4</hutool.version>
         <minio.version>8.4.3</minio.version>
+        <mapStruct.version>1.5.2.Final</mapStruct.version>
     </properties>
 
     <dependencyManagement>
@@ -110,11 +111,28 @@
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-            <!--            minio-->
+            <!--  minio-->
             <dependency>
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
+            </dependency>
+            <!--  mapStruct 实体类转换器 -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-jdk8</artifactId>
+                <version>${mapStruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapStruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapStruct.version}</version>
+                <optional>true</optional>
             </dependency>
         </dependencies>
     </dependencyManagement>
