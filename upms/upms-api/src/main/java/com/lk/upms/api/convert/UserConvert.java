@@ -13,6 +13,6 @@ public interface UserConvert {
 
     PasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
-    @Mapping(source = "password",target = "password",expression = "java(ENCODER.encode(userDTO.getPassword()))")
+    @Mapping(target = "password",expression = "java(ENCODER.encode(userDTO.getPassword()))")
     SysUser userDTO2User(UserDTO userDTO);
 }
