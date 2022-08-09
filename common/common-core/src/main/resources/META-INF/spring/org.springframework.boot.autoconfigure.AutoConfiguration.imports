@@ -1,3 +1,4 @@
+com.lk.common.core.config.EsTemplateConfiguration
 com.lk.common.core.config.TaskExecutorConfiguration
 com.lk.common.core.config.JacksonConfiguration
 com.lk.common.core.config.RedisTemplateConfiguration
