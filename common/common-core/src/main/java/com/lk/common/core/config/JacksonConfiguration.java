@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.lk.common.core.jackson.CustomJavaTimeModule;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -21,9 +20,8 @@ import java.util.TimeZone;
  *
  * @date 2020-06-17
  */
-@AutoConfiguration
+@AutoConfiguration(before = JacksonAutoConfiguration.class)
 @ConditionalOnClass(ObjectMapper.class)
-@AutoConfigureBefore(JacksonAutoConfiguration.class)
 public class JacksonConfiguration {
 
     @Bean

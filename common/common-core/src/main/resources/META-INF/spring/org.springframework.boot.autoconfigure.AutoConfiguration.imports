@@ -1,7 +1,7 @@
 com.lk.common.core.config.EsTemplateConfiguration
 com.lk.common.core.config.TaskExecutorConfiguration
 com.lk.common.core.config.JacksonConfiguration
-com.lk.common.core.config.RedisTemplateConfiguration
+com.lk.common.core.config.RedissonConfiguration
 com.lk.common.core.config.RestTemplateConfiguration
 com.lk.common.core.util.SpringContextHolder
 com.lk.common.core.config.WebMvcConfiguration
