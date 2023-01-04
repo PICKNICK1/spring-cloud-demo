@@ -38,6 +38,11 @@
             <artifactId>common-log</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.lk</groupId>
+            <artifactId>common-mqtt</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!--接口文档-->
         <dependency>
             <groupId>com.lk</groupId>
